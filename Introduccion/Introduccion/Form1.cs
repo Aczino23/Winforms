@@ -10,9 +10,12 @@ public partial class Form1 : Form
     TextBox? txtAltura;
     Label? lblBase;
     TextBox? txtBase;
+    Label? lblLado;
+    TextBox? txtLado;
     Button? btnCalcular;
     Label? lblResultado;
     TextBox? txtResultado;
+    
     public Form1()
     {
         InitializeComponent();
@@ -34,9 +37,11 @@ public partial class Form1 : Form
         cmbFiguras = new ComboBox();
         cmbFiguras.Items.Add("Cuadrado");
         cmbFiguras.Items.Add("Rectangulo");
+        cmbFiguras.Items.Add("Triangulo");
         cmbFiguras.Location = new Point(10, 35); // ubicacion
         // valor por defecto
         cmbFiguras.SelectedIndex = 0;
+        cmbFiguras.DropDownStyle = ComboBoxStyle.DropDownList;
         cmbFiguras.SelectedIndexChanged += new EventHandler(cmbFiguras_ValueChanged);
         
         // Etiqueta de calculo
@@ -52,7 +57,8 @@ public partial class Form1 : Form
         cmbCalculos.Location = new Point(150, 35); // ubicacion
         // valor por defecto
         cmbCalculos.SelectedIndex = 0;
-        cmbCalculos.SelectedValueChanged += new EventHandler(cmbCalculo_ValueChanged);
+        cmbCalculos.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbCalculos.SelectedValueChanged += new EventHandler(cmbFiguras_ValueChanged);
         
 
         // Etiqueta de altura
@@ -78,12 +84,26 @@ public partial class Form1 : Form
         txtBase.Size = new Size(100, 20);
         txtBase.Location = new Point(60, 105); // ubicacion
         txtBase.Visible = false;
-
+        
+        // Etiqueta de lado
+        lblLado = new Label();
+        lblLado.Text = "Lado";
+        lblLado.AutoSize = true;
+        lblLado.Location = new Point(10, 140); // ubicacion
+        lblLado.Visible = false;
+        
+        // TextBox de lado
+        txtLado = new TextBox();
+        txtLado.Size = new Size(100, 20);
+        txtLado.Location = new Point(60, 135); // ubicacion
+        txtLado.Visible = false;
+        
         // Boton calcular
         btnCalcular = new Button();
         btnCalcular.Text = "Calcular";
         btnCalcular.AutoSize = true;
         btnCalcular.Location = new Point(170, 200); // ubicacion
+        btnCalcular.Click += new EventHandler(btnCalcular_Click);
 
         // Etiqueta resultado
         lblResultado = new Label();
@@ -105,30 +125,171 @@ public partial class Form1 : Form
         this.Controls.Add(txtAltura);
         this.Controls.Add(lblBase);
         this.Controls.Add(txtBase);
+        this.Controls.Add(lblLado);
+        this.Controls.Add(txtLado);
         this.Controls.Add(btnCalcular);
         this.Controls.Add(lblResultado);
         this.Controls.Add(txtResultado);
     }
     
     private void btnCalcular_Click(object sender, EventArgs e){
-        string calculo= cmbCalculos.SelectedIndex.ToString();
-        int altura = 0;
-        if(txtAltura.Text != ""){
-            altura = Convert.ToInt32(txtAltura.Text);
-            txtResultado.Text=(altura*4).ToString();
+        string calculo= cmbCalculos.SelectedItem.ToString();
+        string figura = cmbFiguras.SelectedItem.ToString();
+        double resultado = 0;
+        if (figura == "Cuadrado" && calculo == "Périmetro"){ // calcular el perimetro de un cuadrado
+            try
+            {
+                double lado = Convert.ToDouble(txtAltura.Text);
+                resultado = calcularPerimetroCuadrado(lado);
+                // mostrar resultado en el textbox de resultado
+                txtResultado.TextAlign = HorizontalAlignment.Center;
+                txtResultado.Text = resultado.ToString();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Ingrese un valor válido", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtAltura.Text = "";
+            }
+        } 
+        else if (figura == "Cuadrado" && calculo == "Área") // calcular el área de un cuadrado
+        {
+            try
+            {
+                double lado = Convert.ToDouble(txtAltura.Text);
+                resultado = calcularAreaCuadrado(lado);
+                // mostrar resultado en el textbox de resultado
+                txtResultado.TextAlign = HorizontalAlignment.Center;
+                txtResultado.Text = resultado.ToString();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Ingrese un valor válido", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtAltura.Text = "";
+            }
+        }
+        else if (figura == "Rectangulo" && calculo == "Périmetro") // calcular périmetro del rectangulo
+        {
+            try
+            {
+                double baseR = Convert.ToDouble(txtBase.Text);
+                double alturaR = Convert.ToDouble(txtAltura.Text);
+                resultado = calcularPerimetroRectangulo(baseR, alturaR);
+                // mostrar resultado en el textbox de resultado
+                txtResultado.TextAlign = HorizontalAlignment.Center;
+                txtResultado.Text = resultado.ToString();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Ingrese un valor válido", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtBase.Text = "";
+                txtAltura.Text = "";
+            }
+        }
+        else if (figura == "Rectangulo" && calculo == "Área")
+        {
+            try
+            {
+                double baseR = Convert.ToDouble(txtBase.Text);
+                double alturaR = Convert.ToDouble(txtAltura.Text);
+                resultado = calcularAreaRectangulo(baseR, alturaR);
+                // mostrar resultado en el textbox de resultado
+                txtResultado.TextAlign = HorizontalAlignment.Center;
+                txtResultado.Text = resultado.ToString();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Ingrese un valor válido", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtBase.Text = "";
+                txtAltura.Text = "";
+            }
+        }
+        else if (figura == "Triangulo" && calculo == "Périmetro")
+        {
+            try
+            {
+                double baseT = Convert.ToDouble(txtBase.Text);
+                double alturaT = Convert.ToDouble(txtAltura.Text);
+                double ladoT = Convert.ToDouble(txtLado.Text);
+                resultado = calcularPerimetroTriangulo(baseT, alturaT, ladoT);
+                // mostrar resultado en el textbox de resultado
+                txtResultado.TextAlign = HorizontalAlignment.Center;
+                txtResultado.Text = resultado.ToString();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Ingrese un valor válido", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtBase.Text = "";
+                txtAltura.Text = "";
+                txtLado.Text = "";
+            }
+        }
+        else if (figura == "Triangulo" && calculo == "Área")
+        {
+            try
+            {
+                double baseT = Convert.ToDouble(txtBase.Text);
+                double alturaT = Convert.ToDouble(txtAltura.Text);
+                resultado = calcularAreaTriangulo(baseT, alturaT);
+                // mostrar resultado en el textbox de resultado
+                txtResultado.TextAlign = HorizontalAlignment.Center;
+                txtResultado.Text = resultado.ToString();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Ingrese un valor válido", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtBase.Text = "";
+                txtAltura.Text = "";
+            }
+        }
+        else
+        {
+            txtResultado.Text = "";
         }
     }
-    
+
     private void cmbFiguras_ValueChanged(object sender, EventArgs e)
     {
         if (cmbFiguras != null && cmbCalculos != null)
         {
-            if (cmbFiguras.SelectedItem.ToString() == "Cuadrado" && cmbCalculos.SelectedItem.ToString() == "Périmetro")
+            if (cmbFiguras.SelectedItem.ToString() == "Cuadrado" && (cmbCalculos.SelectedItem.ToString() == "Périmetro" 
+                || cmbCalculos.SelectedItem.ToString() == "Área"))
             {
                 lblAltura.Visible = true;
                 txtAltura.Visible = true;
                 lblBase.Visible = false;
                 txtBase.Visible = false;
+                lblLado.Visible = false;
+                txtLado.Visible = false;
+                txtAltura.Text = "";
+                txtBase.Text = "";
+                txtLado.Text = "";
+                txtResultado.Text = "";
+            }
+            else if (cmbFiguras.SelectedItem.ToString() == "Triangulo" && cmbCalculos.SelectedItem.ToString() == "Área")
+            {
+                lblAltura.Visible = true;
+                txtAltura.Visible = true;
+                lblBase.Visible = true;
+                txtBase.Visible = true;
+                lblLado.Visible = false;
+                txtLado.Visible = false;
+                txtAltura.Text = "";
+                txtBase.Text = "";
+                txtLado.Text = "";
+                txtResultado.Text = "";
+            }
+            else if (cmbFiguras.SelectedItem.ToString() == "Triangulo" && cmbCalculos.SelectedItem.ToString() == "Périmetro")
+            {
+                lblAltura.Visible = true;
+                txtAltura.Visible = true;
+                lblBase.Visible = true;
+                txtBase.Visible = true;
+                lblLado.Visible = true;
+                txtLado.Visible = true;
+                txtAltura.Text = "";
+                txtBase.Text = "";
+                txtLado.Text = "";
+                txtResultado.Text = "";
             }
             else
             {
@@ -136,19 +297,36 @@ public partial class Form1 : Form
                 txtAltura.Visible = true;
                 lblBase.Visible = true;
                 txtBase.Visible = true;
+                lblLado.Visible = false;
+                txtLado.Visible = false;
+                txtAltura.Text = "";
+                txtBase.Text = "";
+                txtLado.Text = "";
+                txtResultado.Text = "";
             }
         }
     }
     
-    private void cmbCalculo_ValueChanged(object sender, EventArgs e)
-    {
-        if (cmbCalculos.SelectedItem.ToString() == "Périmetro")
-        {
-            lblResultado.Text = "Périmetro";
-        }
-        else
-        {
-            lblResultado.Text = "Área";
-        }
+   private double calcularAreaCuadrado(double lado){
+        return lado * lado;
+    }
+   private double calcularAreaTriangulo(double altura, double lBase){
+        return (altura * lBase) / 2;
+    }
+   
+   private double calcularPerimetroCuadrado(double lado){
+        return lado * 4;
+    }
+
+    private double calcularPerimetroTriangulo(double altura, double lBase, double lado){
+        return altura + lBase + lado;
+    }
+    
+    private double calcularAreaRectangulo(double baseR, double alturaR){
+        return baseR * alturaR;
+    }
+    
+    private double calcularPerimetroRectangulo(double baseR, double alturaR){
+        return (baseR * 2) + (alturaR * 2);
     }
 }
