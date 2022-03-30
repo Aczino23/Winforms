@@ -1,5 +1,5 @@
 # Winforms
-### Nombre: Cristian Omar Alvarado Rordíguez.
+### Nombre: Cristian Omar Alvarado Rodríguez.
 ### Grupo: 4 "B".
 ### Tarea #3.
 
